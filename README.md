@@ -9,7 +9,7 @@ Complete the code in Graph.cs by implementing the following methods</br>
 </br>
 There are comments to guide you inside each method</br>
 Once you have finished sucessfully the tests in GraphTests.cs should pass</br>
-You may wish to write more tests of your own or run the code from Program.cs</br>
+You may wish to write more tests of your own or write code to call from Program.cs</br>
 
 ### Pseudo code for Dijkstra using priority queue
 ```
