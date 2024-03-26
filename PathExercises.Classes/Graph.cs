@@ -22,42 +22,52 @@ namespace PathExercises.Classes
         // Public Methods
         public List<string> FindShortestPath(string startVertex, string endVertex)
         {
-            // Find start vertex if it doesn't exist throw an error
-            // Find end vertex if it doesn't exist throw an error
-            
-            if (IsGraphWeighted())
-            {
-                // If the graph is weighted call Dijkstra()
-            }
-            else
-            {
-                // Otherwise call BFS() (Dijkstra also works on unweighted graphs but this is just to illustrate)
-            }
+			// Check start vertex exists
+			if (!_graph.Any(kvp => kvp.Key.Name == startVertex))
+			{
+				throw new ArgumentException("Start vertex not found");
+			}
+			var start = _graph.First(kvp => kvp.Key.Name == startVertex).Key;
 
-            // Call GetPath to extract the path information saved into the vertices
-            throw new NotImplementedException();
-        }
+			// Check end vertex exists
+			if (!_graph.Any(kvp => kvp.Key.Name == endVertex))
+			{
+				throw new ArgumentException("End vertex not found");
+			}
+			var end = _graph.First(kvp => kvp.Key.Name == endVertex).Key;
 
-        public List<(string name, double distance)> FindDistances(string startVertex)
-        {
-            // Find start vertex if it doesn't exist throw an error
+			if (IsGraphWeighted())
+			{
+				Dijkstra(start);
+			}
+			else
+			{
+				BFS(start);
+			}
+			return GetPath(end);
+		}
 
-            if (IsGraphWeighted())
-            {
-                // If the graph is weighted call Dijkstra()
-            }
-            else
-            {
-                // Otherwise call BFS() (Dijkstra also works on unweighted graphs but this is just to illustrate)
-            }
+		public List<(string name, double distance)> FindDistances(string startVertex)
+		{
+			// Check start vertex exists
+			if (!_graph.Any(kvp => kvp.Key.Name == startVertex))
+			{
+				throw new ArgumentException("Start vertex not found");
+			}
+			var start = _graph.First(kvp => kvp.Key.Name == startVertex).Key;
 
-            // Write some code here to extract the node names and distances and return it as a list of tuples
-            // Order the list by ascending distance
-            // You can use a linq expression with select and order by to do this
-            throw new NotImplementedException();
-        }
+			if (IsGraphWeighted())
+			{
+				Dijkstra(start);
+			}
+			else
+			{
+				BFS(start);
+			}
+			return _graph.Keys.Select(vertex => (vertex.Name, vertex.Distance)).OrderBy(v => v.Distance).ToList();
+		}
 
-        public void AddEdge(string startName, string endName, double weight=1)
+		public void AddEdge(string startName, string endName, double weight=1)
         {
             Vertex startVertex = AddOrGetVertex(startName);
             Vertex endVertex = AddOrGetVertex(endName);
@@ -99,14 +109,64 @@ namespace PathExercises.Classes
         // Private methods
         private void Dijkstra(Vertex startVertex)
         {
-            // Implement Dijkstra here
-            // You can use the PriorityQueue<T> class but you will have to enqueue the vertex again if the distance changes
-            // This is because the priority is not updated after insertion
-            // There is some pseudocode in the readme if needed
-            throw new NotImplementedException() ;
-        }
+			Reset(); // set vertices to starting values
+			startVertex.Distance = 0;
+			PriorityQueue<Vertex, double> queue = new();
+			queue.Enqueue(startVertex, startVertex.Distance);
+			while (queue.Count > 0)
+			{
+				Vertex currentVertex = queue.Dequeue();
+				if (!currentVertex.Visited) // The same Vertex might get enqueued multiple times with shorter distances to we need to check if it has been visited already
+				{
+					currentVertex.Visited = true;
+					foreach (var neighbour in _graph[currentVertex])
+					{
+						if (!neighbour.Key.Visited)
+						{
+							var weight = neighbour.Value;
+							if (currentVertex.Distance + weight < neighbour.Key.Distance)
+							{
+								neighbour.Key.Distance = currentVertex.Distance + weight;
+								neighbour.Key.PreviousVertex = currentVertex;
+								queue.Enqueue(neighbour.Key, neighbour.Key.Distance);
+							}
+						}
+					}
+				}
+			}
+		}
 
-        private void BFS(Vertex startVertex)
+		private void DijkstraList(Vertex startVertex)
+		{
+			Reset(); // set vertices to starting values
+			startVertex.Visited = true;
+			startVertex.Distance = 0;
+			List<Vertex> toVisit = new();
+			foreach (var vertex in _graph.Keys)
+			{
+				toVisit.Add(vertex); // add every node
+			}
+			while (toVisit.Count > 0)
+			{
+				var currentVertex = toVisit.OrderBy(v => v.Distance).First();
+				currentVertex.Visited = true;
+				toVisit.Remove(currentVertex);
+				foreach (var neighbour in _graph[currentVertex])
+				{
+					if (!neighbour.Key.Visited)
+					{
+						var weight = neighbour.Value;
+						if (currentVertex.Distance + weight < neighbour.Key.Distance)
+						{
+							neighbour.Key.Distance = currentVertex.Distance + weight;
+							neighbour.Key.PreviousVertex = currentVertex;
+						}
+					}
+				}
+			}
+		}
+
+		private void BFS(Vertex startVertex)
         {
             Reset(); // set vertices to starting values
             Queue<Vertex> queue = new();
@@ -130,12 +190,18 @@ namespace PathExercises.Classes
         }
 
         private List<string> GetPath(Vertex vertex)
-        {
-            // Return the path from the vertex passed in by adding the previous vertex to a list
-            // Continue until the previous vertex is null
-            // At the end you will want to reverse the list to get the order correct
-            throw new NotImplementedException();
-        }
+		{
+			List<string> route = new();
+			Vertex current = vertex;
+			route.Add(current.Name);
+			while (current.PreviousVertex != null)
+			{
+				current = current.PreviousVertex;
+				route.Add(current.Name);
+			}
+			route.Reverse();
+			return route;
+		}
         private Vertex AddOrGetVertex(string vertexName)
         {
             Vertex vertex;
