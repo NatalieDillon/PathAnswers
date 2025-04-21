@@ -5,7 +5,7 @@ namespace PathExercises.Tests
     [TestClass]
     public class GraphTests
     {                   
-        private static Graph PopulateUnweightedUndirectedGraph()
+        private static UndirectedGraph PopulateUnweightedUndirectedGraph()
         {
             UndirectedGraph graph = new();
             graph.AddEdge("A", "C");
@@ -35,7 +35,7 @@ namespace PathExercises.Tests
             return graph;
         }
 
-        private static Graph PopulateWeightedUnDirectedGraph()
+        private static UndirectedGraph PopulateWeightedUnDirectedGraph()
         {
             UndirectedGraph graph = new();
             graph.AddEdge("A", "B", 7);
@@ -54,7 +54,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateWeightedUnDirectedGraph();
             var distances = graph.FindDistances("A");
-            List<(string name, double distance)> expected = new() { ("A", 0), ("D", 3), ("B", 5), ("C", 7), ("E", 9) };
+            List<(string name, double distance)> expected = [ ("A", 0), ("D", 3), ("B", 5), ("C", 7), ("E", 9) ];
             CollectionAssert.AreEqual(expected, distances);
         }
 
@@ -63,7 +63,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateWeightedDirectedGraph();
             List<string> route = graph.FindShortestPath("A", "C");
-            List<string> expectedRoute = new() { "A", "D", "C" };
+            List<string> expectedRoute = [ "A", "D", "C" ];
             CollectionAssert.AreEqual(expectedRoute, route);
         }
 
@@ -72,7 +72,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateWeightedDirectedGraph();
             List<string> route = graph.FindShortestPath("A", "E");
-            List<string> expectedRoute = new() { "A", "D", "C", "E" };
+            List<string> expectedRoute = [ "A", "D", "C", "E" ];
             CollectionAssert.AreEqual(expectedRoute, route);
         }
 
@@ -82,7 +82,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateUnweightedUndirectedGraph();
             List<string> route = graph.FindShortestPath("A", "D");
-            List<string> expectedRoute = new() { "A", "C", "D" };
+            List<string> expectedRoute = [ "A", "C", "D" ];
             CollectionAssert.AreEqual(expectedRoute, route);
         }
 
@@ -91,7 +91,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateWeightedDirectedGraph();
             var distances = graph.FindDistances("A");
-            List<(string name, double distance)> expected = new() { ("A", 0), ("D", 3), ("B", 7), ("C", 7), ("E", 9) };
+            List<(string name, double distance)> expected = [ ("A", 0), ("D", 3), ("B", 7), ("C", 7), ("E", 9) ];
             CollectionAssert.AreEqual(expected, distances);
         }
 
@@ -100,7 +100,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateUnweightedUndirectedGraph();
             List<string> route = graph.FindShortestPath("A", "I");
-            List<string> expectedRoute = new() { "A", "E", "H", "I" };
+            List<string> expectedRoute = [ "A", "E", "H", "I" ];
             CollectionAssert.AreEqual(expectedRoute, route);
         }
 
@@ -109,7 +109,7 @@ namespace PathExercises.Tests
         {
             Graph graph = PopulateUnweightedUndirectedGraph();
             var distances = graph.FindDistances("A");
-            List<(string name, double distance)> expected = new() { ("A",0), ("C",1), ("E",1), ("D",2), ("G",2), ("H",2), ("F",3), ("I",3), ("B",4)};
+            List<(string name, double distance)> expected =[ ("A",0), ("C",1), ("E",1), ("D",2), ("G",2), ("H",2), ("F",3), ("I",3), ("B",4)];
             CollectionAssert.AreEqual(expected, distances);
         }
     }

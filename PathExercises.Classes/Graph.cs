@@ -9,7 +9,7 @@ namespace PathExercises.Classes
     public class Graph
     {
         // Fields
-        private readonly Dictionary<Vertex, Dictionary<Vertex, double>> _graph = new();
+        private readonly Dictionary<Vertex, Dictionary<Vertex, double>> _graph = [];
         private readonly bool _isDirected = true;
 
         // Constructors
@@ -141,7 +141,7 @@ namespace PathExercises.Classes
 			Reset(); // set vertices to starting values
 			startVertex.Visited = true;
 			startVertex.Distance = 0;
-			List<Vertex> toVisit = new();
+			List<Vertex> toVisit = [];
 			foreach (var vertex in _graph.Keys)
 			{
 				toVisit.Add(vertex); // add every node
@@ -189,9 +189,9 @@ namespace PathExercises.Classes
             }
         }
 
-        private List<string> GetPath(Vertex vertex)
+        private static List<string> GetPath(Vertex vertex)
 		{
-			List<string> route = new();
+			List<string> route = [];
 			Vertex current = vertex;
 			route.Add(current.Name);
 			while (current.PreviousVertex != null)
@@ -208,7 +208,7 @@ namespace PathExercises.Classes
             if (!_graph.Any(kvp => kvp.Key.Name == vertexName))
             {
                 vertex = new(vertexName);
-                _graph.Add(vertex, new Dictionary<Vertex, double>());
+                _graph.Add(vertex, []);
             }
             vertex = _graph.First(kvp => kvp.Key.Name == vertexName).Key;
             return vertex;
@@ -216,13 +216,9 @@ namespace PathExercises.Classes
         private void AddNeighbour(Vertex startVertex, Vertex endVertex, double weight)
         {
             var neighbours = _graph[startVertex];
-            if (neighbours.ContainsKey(endVertex))
+            if (!neighbours.TryAdd(endVertex, weight))
             {
                 neighbours[endVertex] = weight;
-            }
-            else
-            {
-                neighbours.Add(endVertex, weight);
             }
         }
         private bool IsGraphWeighted()
